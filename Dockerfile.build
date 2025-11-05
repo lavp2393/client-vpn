@@ -1,0 +1,43 @@
+# Dockerfile multi-stage para compilación limpia
+# Uso: docker build -f Dockerfile.build -t preyvpn-builder .
+#      docker run --rm -v $(pwd)/dist:/dist preyvpn-builder
+
+# Stage 1: Builder
+FROM golang:1.22-bookworm AS builder
+
+# Instalar solo dependencias necesarias para compilar
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-dev \
+    xorg-dev \
+    libx11-dev \
+    libxrandr-dev \
+    libxcursor-dev \
+    libxinerama-dev \
+    libxi-dev \
+    libxxf86vm-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Copiar go.mod y go.sum para cachear dependencias
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copiar código fuente
+COPY . .
+
+# Compilar el binario
+# -ldflags="-s -w" reduce el tamaño eliminando símbolos de debug
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
+    go build -ldflags="-s -w" -o preyvpn ./cmd/preyvpn
+
+# Verificar que el binario se creó correctamente
+RUN ls -lh preyvpn
+
+# Stage 2: Output (opcional - para runtime minimal)
+FROM scratch AS export
+COPY --from=builder /build/preyvpn /preyvpn
+
+# Por defecto, copiar el binario al volumen /output
+FROM builder AS output
+CMD ["sh", "-c", "cp /build/preyvpn /output/ && echo 'Binario compilado en /output/preyvpn' && ls -lh /output/preyvpn"]

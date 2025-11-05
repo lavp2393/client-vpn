@@ -1,0 +1,39 @@
+# Binarios
+preyvpn
+*.exe
+*.dll
+*.so
+*.dylib
+tmp/
+dist/
+
+# Tests
+*.test
+coverage.out
+*.out
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Cache
+.cache/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

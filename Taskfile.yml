@@ -1,0 +1,216 @@
+version: '3'
+
+# Variables globales
+vars:
+  PROJECT_NAME: preyvpn
+  SERVICE: preyvpn
+
+# Definiciones reutilizables (YAML anchors)
+tasks:
+  # === Setup y Construcción ===
+
+  setup:
+    desc: "Configurar el entorno de desarrollo (primera vez)"
+    cmds:
+      - echo "📦 Configurando entorno de desarrollo..."
+      - xhost +local:docker  # Permitir acceso X11 desde Docker
+      - task: build
+      - echo "✅ Entorno configurado. Usa 'task up' para iniciar"
+
+  build:
+    desc: "Construir la imagen Docker"
+    cmds:
+      - echo "🔨 Construyendo imagen Docker..."
+      - docker-compose build {{.SERVICE}}
+
+  rebuild:
+    desc: "Reconstruir la imagen Docker desde cero (sin cache)"
+    cmds:
+      - echo "🔨 Reconstruyendo imagen Docker sin cache..."
+      - docker-compose build --no-cache {{.SERVICE}}
+
+  # === Ciclo de vida de containers ===
+
+  up:
+    desc: "Iniciar todos los servicios en background"
+    cmds:
+      - xhost +local:docker
+      - docker-compose up -d
+
+  down:
+    desc: "Detener y eliminar todos los containers"
+    cmds:
+      - docker-compose down
+
+  start:
+    desc: "Iniciar un servicio específico (uso: task start SERVICE=preyvpn)"
+    cmds:
+      - docker-compose start {{.SERVICE | default "preyvpn"}}
+
+  stop:
+    desc: "Detener un servicio específico (uso: task stop SERVICE=preyvpn)"
+    cmds:
+      - docker-compose stop {{.SERVICE | default "preyvpn"}}
+
+  restart:
+    desc: "Reiniciar un servicio específico (uso: task restart SERVICE=preyvpn)"
+    cmds:
+      - docker-compose restart {{.SERVICE | default "preyvpn"}}
+
+  # === Logs ===
+
+  logs:
+    desc: "Ver logs de un servicio (uso: task logs SERVICE=preyvpn)"
+    cmds:
+      - docker-compose logs -f {{.SERVICE | default "preyvpn"}}
+
+  logs-all:
+    desc: "Ver logs de todos los servicios"
+    cmds:
+      - docker-compose logs -f
+
+  # === Ejecución de comandos ===
+
+  exec:
+    desc: "Ejecutar comando en el container (uso: task exec CMD='go test ./...')"
+    cmds:
+      - docker-compose exec {{.SERVICE | default "preyvpn"}} {{.CMD}}
+
+  exec-sh:
+    desc: "Abrir shell en el container (uso: task exec-sh SERVICE=preyvpn)"
+    cmds:
+      - docker-compose exec {{.SERVICE | default "preyvpn"}} /bin/bash
+
+  # === Desarrollo ===
+
+  dev:
+    desc: "Iniciar modo desarrollo con hot-reload (logs visibles)"
+    cmds:
+      - xhost +local:docker
+      - docker-compose up
+
+  run:
+    desc: "Ejecutar la aplicación manualmente dentro del container"
+    cmds:
+      - docker-compose exec {{.SERVICE}} sudo /usr/sbin/openvpn --version
+      - docker-compose exec {{.SERVICE}} ./tmp/preyvpn
+
+  # === Compilación sin dependencias locales ===
+
+  build-docker:
+    desc: "Compilar binario usando Docker (NO requiere Go ni dependencias instaladas)"
+    cmds:
+      - echo "🔨 Compilando con Docker (esto puede tomar 3-5 min la primera vez)..."
+      - mkdir -p dist
+      - docker build -f Dockerfile.build -t preyvpn-builder --target builder .
+      - docker run --rm -v {{.PWD}}/dist:/output preyvpn-builder sh -c "cp /build/preyvpn /output/ && chmod +x /output/preyvpn"
+      - echo "✅ Binario compilado en ./dist/preyvpn"
+      - ls -lh dist/preyvpn
+
+  build-docker-release:
+    desc: "Compilar binario optimizado para distribución usando Docker"
+    cmds:
+      - echo "🔨 Compilando versión release con Docker..."
+      - mkdir -p dist
+      - docker build -f Dockerfile.build -t preyvpn-builder --target builder .
+      - docker run --rm -v {{.PWD}}/dist:/output preyvpn-builder sh -c "cp /build/preyvpn /output/preyvpn && strip /output/preyvpn && chmod +x /output/preyvpn"
+      - echo "✅ Binario optimizado compilado en ./dist/preyvpn"
+      - ls -lh dist/preyvpn
+      - file dist/preyvpn
+
+  compile:
+    desc: "Compilar el binario dentro del container de desarrollo (requiere container corriendo)"
+    cmds:
+      - docker-compose exec {{.SERVICE}} go build -o ./tmp/preyvpn ./cmd/preyvpn
+      - echo "✅ Binario compilado en ./tmp/preyvpn"
+
+  test:
+    desc: "Ejecutar tests dentro del container"
+    cmds:
+      - docker-compose exec {{.SERVICE}} go test ./...
+
+  fmt:
+    desc: "Formatear código Go"
+    cmds:
+      - docker-compose exec {{.SERVICE}} go fmt ./...
+
+  vet:
+    desc: "Analizar código con go vet"
+    cmds:
+      - docker-compose exec {{.SERVICE}} go vet ./...
+
+  tidy:
+    desc: "Limpiar dependencias de go.mod"
+    cmds:
+      - docker-compose exec {{.SERVICE}} go mod tidy
+
+  # === Información ===
+
+  ps:
+    desc: "Listar containers en ejecución"
+    cmds:
+      - docker-compose ps
+
+  top:
+    desc: "Ver procesos corriendo en un servicio (uso: task top SERVICE=preyvpn)"
+    cmds:
+      - docker-compose top {{.SERVICE | default "preyvpn"}}
+
+  stats:
+    desc: "Ver estadísticas de uso de recursos"
+    cmds:
+      - docker stats $(docker-compose ps -q)
+
+  # === Limpieza ===
+
+  clean:
+    desc: "Limpiar binarios compilados y cache"
+    cmds:
+      - rm -rf ./tmp
+      - rm -rf ./dist
+      - echo "✅ Limpieza completada"
+
+  clean-all:
+    desc: "Limpieza profunda (containers, volúmenes, imágenes)"
+    cmds:
+      - docker-compose down -v --rmi all
+      - task: clean
+      - echo "✅ Limpieza profunda completada"
+
+  # === Docker registry ===
+
+  pull:
+    desc: "Actualizar imágenes base desde registry"
+    cmds:
+      - docker-compose pull
+
+  # === Utilidades ===
+
+  x11-fix:
+    desc: "Arreglar permisos de X11 para Docker"
+    cmds:
+      - xhost +local:docker
+      - echo "✅ Permisos X11 configurados"
+
+  vpn-config:
+    desc: "Verificar configuración VPN"
+    cmds:
+      - |
+        if [ -f ~/PreyVPN/prey-prod.ovpn ]; then
+          echo "✅ Archivo de configuración VPN encontrado"
+          ls -lh ~/PreyVPN/prey-prod.ovpn
+        else
+          echo "❌ Archivo de configuración VPN no encontrado en ~/PreyVPN/prey-prod.ovpn"
+        fi
+
+  help:
+    desc: "Mostrar ayuda de comandos disponibles"
+    cmds:
+      - task --list
+
+  # === Deploy (para futuro) ===
+
+  deploy:
+    desc: "Deploy de producción (placeholder)"
+    cmds:
+      - echo "🚀 Deploy no implementado aún"

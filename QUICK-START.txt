@@ -1,0 +1,50 @@
+===========================================
+  PreyVPN - Guía Rápida (Linux)
+===========================================
+
+📍 UBICACIÓN DEL BINARIO COMPILADO
+──────────────────────────────────
+  dist/preyvpn
+
+🔨 COMPILAR (solo requiere Docker)
+──────────────────────────────────
+  task build-docker
+  
+  O:
+  
+  ./dev.sh build-binary
+
+▶️  EJECUTAR
+──────────────────────────────────
+  ./dist/preyvpn
+
+📚 COMANDOS IMPORTANTES
+──────────────────────────────────
+  # Compilación
+  task build-docker          # Compilar binario
+  task build-docker-release  # Versión optimizada
+  
+  # Desarrollo
+  task dev                   # Hot-reload (edita código, ve cambios)
+  task logs                  # Ver logs
+  task down                  # Detener todo
+  
+  # Gestión
+  task up                    # Iniciar containers
+  task restart               # Reiniciar
+  task exec-sh               # Shell interactivo
+  task clean                 # Limpiar archivos
+
+📖 DOCUMENTACIÓN
+──────────────────────────────────
+  README-QUICK.md           ⭐ Guía rápida para el equipo
+  BUILD.md                  Compilación detallada
+  DOCKER-README.md          Entorno de desarrollo
+  TECHNICAL_CONTEXT.md      Problema del OTP
+
+🎯 PROBLEMA ACTUAL
+──────────────────────────────────
+  El OTP no se está capturando correctamente.
+  Ver TECHNICAL_CONTEXT.md para detalles.
+
+===========================================

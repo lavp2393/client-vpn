@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  preyvpn:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    container_name: preyvpn-dev
+
+    # Montar X11 socket para GUI
+    volumes:
+      # Código fuente (hot-reload)
+      - .:/app
+      # X11 socket
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Configuración VPN (si existe)
+      - ${HOME}/PreyVPN:/home/developer/PreyVPN:ro
+      # Cache de Go modules (para velocidad)
+      - go-modules:/go/pkg/mod
+      # Binarios compilados
+      - ./tmp:/app/tmp
+
+    # Variables de entorno para X11
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/tmp/.docker.xauth
+      - QT_X11_NO_MITSHM=1
+
+    # Permisos de red necesarios para OpenVPN (si se prueba dentro del container)
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+
+    # Red en modo host para mejor compatibilidad con GUI
+    network_mode: host
+
+    # Mantener el container corriendo
+    stdin_open: true
+    tty: true
+
+volumes:
+  go-modules:
+    driver: local

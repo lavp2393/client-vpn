@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PreyVPN
+Comment=Cliente VPN corporativo con autenticación multi-factor
+Icon=preyvpn
+Exec=preyvpn
+Terminal=false
+Categories=Network;Security;
+Keywords=vpn;openvpn;prey;
+StartupNotify=true

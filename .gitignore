@@ -1,0 +1,44 @@
+# Binarios
+preyvpn
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Directorios de build
+bin/
+dist/
+build/
+
+# Dependencias de Go
+vendor/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos de configuración sensibles
+*.ovpn
+*.conf
+
+# Testing
+*.test
+*.out
+coverage.txt
+
+# Docker
+tmp/
+.docker.xauth
+
+# Air (hot-reload)
+build-errors.log
