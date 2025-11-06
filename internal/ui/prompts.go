@@ -51,7 +51,7 @@ func ShowUsernamePrompt(window fyne.Window, callback PromptCallback) {
 }
 
 // ShowUsernamePromptWithRemember muestra un modal para ingresar el usuario con opción de recordar
-func ShowUsernamePromptWithRemember(window fyne.Window, defaultValue string, callback PromptCallbackWithRemember) {
+func ShowUsernamePromptWithRemember(window fyne.Window, defaultValue string, rememberDefault bool, callback PromptCallbackWithRemember) {
 	entry := widget.NewEntry()
 	entry.SetPlaceHolder("usuario corporativo")
 
@@ -62,7 +62,7 @@ func ShowUsernamePromptWithRemember(window fyne.Window, defaultValue string, cal
 
 	// Checkbox para recordar credenciales
 	rememberCheck := widget.NewCheck("Recordar credenciales", nil)
-	rememberCheck.Checked = defaultValue != "" // Marcar si ya hay credenciales guardadas
+	rememberCheck.SetChecked(rememberDefault)
 
 	form := widget.NewForm(
 		widget.NewFormItem("Usuario:", entry),

@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/prey/preyvpn/internal/core"
@@ -46,6 +47,7 @@ type App struct {
 	savedUsername string
 	savedPassword string
 	rememberCreds bool
+	credStore     core.CredentialStoreMethod
 }
 
 // NewApp crea una nueva instancia de la aplicación
@@ -56,16 +58,10 @@ func NewApp() *App {
 		state:     StateDisconnected,
 	}
 
-	// Intentar cargar credenciales guardadas
-	if username, password, err := core.LoadCredentials(); err == nil {
-		a.savedUsername = username
-		a.savedPassword = password
-		a.rememberCreds = true
-	}
-
 	a.window = a.fyneApp.NewWindow("PreyVPN")
 	a.window.Resize(fyne.NewSize(700, 500))
 	a.buildUI()
+	a.initializeStoredCredentials()
 
 	return a
 }
@@ -125,6 +121,32 @@ func (a *App) buildUI() {
 	)
 
 	a.window.SetContent(content)
+}
+
+// initializeStoredCredentials intenta recuperar credenciales guardadas y actualiza el estado interno
+func (a *App) initializeStoredCredentials() {
+	username, password, method, warning, err := core.LoadCredentials()
+	if err == nil {
+		a.savedUsername = username
+		a.savedPassword = password
+		a.rememberCreds = true
+		a.credStore = method
+		a.logCredentialLoad(method)
+		if warning != "" {
+			a.addLog("Aviso: " + warning)
+		}
+		return
+	}
+
+	if warning != "" {
+		a.addLog("Aviso: " + warning)
+	}
+
+	if errors.Is(err, core.ErrCredentialsNotFound) {
+		return
+	}
+
+	a.addLog("Advertencia: No se pudieron cargar credenciales guardadas: " + err.Error())
 }
 
 // updateConfigStatus actualiza el estado del archivo de configuración
@@ -211,7 +233,7 @@ func (a *App) handleEvents() {
 
 		case core.EventAskUser:
 			a.setState(StateAuthenticating)
-			ShowUsernamePromptWithRemember(a.window, a.savedUsername, func(result PromptResult) {
+			ShowUsernamePromptWithRemember(a.window, a.savedUsername, a.rememberCreds, func(result PromptResult) {
 				a.savedUsername = result.Value
 				a.rememberCreds = result.Remember
 
@@ -229,18 +251,24 @@ func (a *App) handleEvents() {
 
 				// Guardar o eliminar credenciales según la decisión tomada en el modal de usuario
 				if a.rememberCreds {
-					if err := core.SaveCredentials(a.savedUsername, a.savedPassword); err != nil {
+					method, warning, err := core.SaveCredentials(a.savedUsername, a.savedPassword)
+					if err != nil {
 						a.addLog("Advertencia: No se pudieron guardar las credenciales: " + err.Error())
 					} else {
-						a.addLog("✓ Credenciales guardadas")
+						a.credStore = method
+						a.logCredentialSave(method)
+						if warning != "" {
+							a.addLog("Aviso: " + warning)
+						}
 					}
 				} else {
 					// Usuario no marcó recordar, eliminar credenciales guardadas si existían
 					if err := core.DeleteCredentials(); err != nil {
-						// Ignorar error si no existían
+						a.addLog("Advertencia: No se pudieron eliminar credenciales guardadas: " + err.Error())
 					}
 					a.savedUsername = ""
 					a.savedPassword = ""
+					a.credStore = core.CredentialStoreMethodNone
 				}
 
 				// Enviar password a OpenVPN
@@ -275,8 +303,15 @@ func (a *App) handleEvents() {
 
 					// Actualizar credenciales guardadas si estaba marcado recordar
 					if a.rememberCreds {
-						if err := core.SaveCredentials(a.savedUsername, a.savedPassword); err != nil {
+						method, warning, err := core.SaveCredentials(a.savedUsername, a.savedPassword)
+						if err != nil {
 							a.addLog("Advertencia: No se pudieron guardar las credenciales: " + err.Error())
+						} else {
+							a.credStore = method
+							a.logCredentialSave(method)
+							if warning != "" {
+								a.addLog("Aviso: " + warning)
+							}
 						}
 					}
 
@@ -330,6 +365,31 @@ func (a *App) addLog(line string) {
 
 	// Auto-scroll al final
 	a.logView.CursorRow = len(a.logBuffer.GetAll())
+}
+
+func (a *App) logCredentialSave(method core.CredentialStoreMethod) {
+	switch method {
+	case core.CredentialStoreMethodKeyring:
+		a.addLog("✓ Credenciales guardadas en el keyring del sistema")
+	case core.CredentialStoreMethodFile:
+		a.addLog("✓ Credenciales guardadas en archivo seguro: " + fallbackCredentialsPathLabel())
+	}
+}
+
+func (a *App) logCredentialLoad(method core.CredentialStoreMethod) {
+	switch method {
+	case core.CredentialStoreMethodKeyring:
+		a.addLog("✓ Credenciales cargadas desde el keyring del sistema")
+	case core.CredentialStoreMethodFile:
+		a.addLog("✓ Credenciales cargadas desde archivo local: " + fallbackCredentialsPathLabel())
+	}
+}
+
+func fallbackCredentialsPathLabel() string {
+	if path := core.GetCredentialsFallbackPath(); path != "" {
+		return path
+	}
+	return "~/.config/PreyVPN/credentials.json"
 }
 
 // Run inicia la aplicación
