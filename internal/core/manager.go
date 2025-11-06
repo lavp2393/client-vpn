@@ -175,23 +175,72 @@ func (m *Manager) sendCommand(cmd string) error {
 }
 
 // readPTY lee continuamente del pseudo-terminal
+// IMPORTANTE: No usamos Scanner porque los prompts de OpenVPN no tienen newline
 func (m *Manager) readPTY() {
 	defer m.wg.Done()
-	scanner := bufio.NewScanner(m.ptmx)
 
-	for scanner.Scan() {
+	reader := bufio.NewReader(m.ptmx)
+	var buffer strings.Builder
+	buf := make([]byte, 1024)
+
+	for {
 		select {
 		case <-m.stopCh:
 			return
 		default:
-			line := scanner.Text()
-			// Enviar siempre como log
-			m.events <- Event{
-				Type:    EventLogLine,
-				Message: line,
+			// Leer con timeout implícito (bloqueante pero responsive)
+			n, err := reader.Read(buf)
+			if err != nil {
+				if err.Error() != "EOF" {
+					// Error de lectura, terminar
+					return
+				}
 			}
-			// Parsear la línea para eventos
-			m.parseLine(line)
+
+			if n > 0 {
+				chunk := string(buf[:n])
+				buffer.WriteString(chunk)
+
+				// Procesar líneas completas (con \n)
+				data := buffer.String()
+				lines := strings.Split(data, "\n")
+
+				// La última parte puede ser incompleta (sin \n)
+				buffer.Reset()
+				if !strings.HasSuffix(data, "\n") {
+					// Guardamos la línea incompleta en el buffer
+					buffer.WriteString(lines[len(lines)-1])
+					lines = lines[:len(lines)-1]
+				}
+
+				// Procesar líneas completas
+				for _, line := range lines {
+					if line != "" {
+						m.events <- Event{
+							Type:    EventLogLine,
+							Message: line,
+						}
+						m.parseLine(line)
+					}
+				}
+
+				// Procesar línea incompleta si contiene prompts conocidos
+				incomplete := buffer.String()
+				if incomplete != "" {
+					// Detectar prompts sin newline
+					if strings.Contains(incomplete, "Enter Auth Username:") ||
+						strings.Contains(incomplete, "Enter Auth Password:") ||
+						strings.Contains(incomplete, "CHALLENGE:") ||
+						strings.Contains(incomplete, "Response:") {
+						m.events <- Event{
+							Type:    EventLogLine,
+							Message: incomplete,
+						}
+						m.parseLine(incomplete)
+						buffer.Reset()
+					}
+				}
+			}
 		}
 	}
 }
@@ -203,7 +252,8 @@ func (m *Manager) parseLine(line string) {
 	// --- Lógica de Detección de Prompts (Basada en tu captura) ---
 
 	// 1. Pedir Usuario
-	if strings.HasSuffix(line, "Enter Auth Username:") {
+	// Cambiado de HasSuffix a Contains porque OpenVPN imprime el input en la misma línea
+	if strings.Contains(line, "Enter Auth Username:") {
 		m.mu.Lock()
 		m.currentStage = "username"
 		m.mu.Unlock()
@@ -215,7 +265,8 @@ func (m *Manager) parseLine(line string) {
 	}
 
 	// 2. Pedir Contraseña
-	if strings.HasSuffix(line, "Enter Auth Password:") {
+	// Cambiado de HasSuffix a Contains porque OpenVPN imprime el input en la misma línea
+	if strings.Contains(line, "Enter Auth Password:") {
 		m.mu.Lock()
 		m.currentStage = "password"
 		m.mu.Unlock()
@@ -229,10 +280,10 @@ func (m *Manager) parseLine(line string) {
 	// 3. Pedir OTP - Múltiples variaciones posibles
 	// Detectar diferentes formatos de challenge de OTP
 	if strings.HasPrefix(line, "CHALLENGE:") ||
-	   strings.Contains(line, "static challenge") ||
-	   strings.Contains(line, "Static challenge") ||
-	   (strings.Contains(line, "OTP") && strings.Contains(line, "Enter")) ||
-	   strings.HasSuffix(line, "Response:") {
+		strings.Contains(line, "static challenge") ||
+		strings.Contains(line, "Static challenge") ||
+		(strings.Contains(line, "OTP") && strings.Contains(line, "Enter")) ||
+		strings.HasSuffix(line, "Response:") {
 		m.mu.Lock()
 		m.currentStage = "otp"
 		m.mu.Unlock()
@@ -300,7 +351,7 @@ func getAuthFailedMessage(stage string) string {
 		return "Usuario incorrecto"
 	default:
 		// Si el fallo ocurre después de enviar el OTP
-		if stage == "connected" { 
+		if stage == "connected" {
 			return "OTP inválido o expirado"
 		}
 		return "Error de autenticación"
@@ -311,15 +362,15 @@ func getAuthFailedMessage(stage string) string {
 // Lo comento por si lo necesitas en otro lado, pero este manager no lo usa.
 /*
 func FindFreePort() (int, error) {
-	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < 10; i++ {
-		port := 49152 + rand.Intn(65535-49152)
-		ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
-		if err == nil {
-			ln.Close()
-			return port, nil
-		}
-	}
-	return 0, fmt.Errorf("no se pudo encontrar un puerto libre")
+        rand.Seed(time.Now().UnixNano())
+        for i := 0; i < 10; i++ {
+                port := 49152 + rand.Intn(65535-49152)
+                ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+                if err == nil {
+                        ln.Close()
+                        return port, nil
+                }
+        }
+        return 0, fmt.Errorf("no se pudo encontrar un puerto libre")
 }
 */

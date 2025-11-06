@@ -31,16 +31,21 @@ type App struct {
 	logBuffer *logs.Buffer
 
 	// UI elements
-	statusLabel     *widget.Label
-	connectBtn      *widget.Button
-	disconnectBtn   *widget.Button
-	retryBtn        *widget.Button
-	logView         *widget.Entry
-	configStatus    *widget.Label
+	statusLabel   *widget.Label
+	connectBtn    *widget.Button
+	disconnectBtn *widget.Button
+	retryBtn      *widget.Button
+	logView       *widget.Entry
+	configStatus  *widget.Label
 
 	// Core components
 	manager *core.Manager
 	sendFns core.SendFns
+
+	// Credentials cache (in-memory for current session)
+	savedUsername string
+	savedPassword string
+	rememberCreds bool
 }
 
 // NewApp crea una nueva instancia de la aplicación
@@ -49,6 +54,13 @@ func NewApp() *App {
 		fyneApp:   app.New(),
 		logBuffer: logs.NewBuffer(30),
 		state:     StateDisconnected,
+	}
+
+	// Intentar cargar credenciales guardadas
+	if username, password, err := core.LoadCredentials(); err == nil {
+		a.savedUsername = username
+		a.savedPassword = password
+		a.rememberCreds = true
 	}
 
 	a.window = a.fyneApp.NewWindow("PreyVPN")
@@ -199,15 +211,39 @@ func (a *App) handleEvents() {
 
 		case core.EventAskUser:
 			a.setState(StateAuthenticating)
-			ShowUsernamePrompt(a.window, func(username string) {
-				if err := a.sendFns.Username(username); err != nil {
+			ShowUsernamePromptWithRemember(a.window, a.savedUsername, func(result PromptResult) {
+				a.savedUsername = result.Value
+				a.rememberCreds = result.Remember
+
+				// Enviar username a OpenVPN
+				if err := a.sendFns.Username(result.Value); err != nil {
 					a.addLog("Error al enviar usuario: " + err.Error())
 				}
 			})
 
 		case core.EventAskPass:
 			a.setState(StateAuthenticating)
-			ShowPasswordPrompt(a.window, func(password string) {
+			// Usar prompt con valor por defecto pero sin checkbox (la decisión ya se tomó en el modal de usuario)
+			ShowPasswordPromptWithDefault(a.window, a.savedPassword, func(password string) {
+				a.savedPassword = password
+
+				// Guardar o eliminar credenciales según la decisión tomada en el modal de usuario
+				if a.rememberCreds {
+					if err := core.SaveCredentials(a.savedUsername, a.savedPassword); err != nil {
+						a.addLog("Advertencia: No se pudieron guardar las credenciales: " + err.Error())
+					} else {
+						a.addLog("✓ Credenciales guardadas")
+					}
+				} else {
+					// Usuario no marcó recordar, eliminar credenciales guardadas si existían
+					if err := core.DeleteCredentials(); err != nil {
+						// Ignorar error si no existían
+					}
+					a.savedUsername = ""
+					a.savedPassword = ""
+				}
+
+				// Enviar password a OpenVPN
 				if err := a.sendFns.Password(password); err != nil {
 					a.addLog("Error al enviar contraseña: " + err.Error())
 				}
@@ -233,7 +269,17 @@ func (a *App) handleEvents() {
 
 			// Re-pedir solo el campo que falló
 			if event.Stage == "password" {
-				ShowPasswordPrompt(a.window, func(password string) {
+				// Re-pedir password sin checkbox (usa la decisión ya tomada)
+				ShowPasswordPromptWithDefault(a.window, a.savedPassword, func(password string) {
+					a.savedPassword = password
+
+					// Actualizar credenciales guardadas si estaba marcado recordar
+					if a.rememberCreds {
+						if err := core.SaveCredentials(a.savedUsername, a.savedPassword); err != nil {
+							a.addLog("Advertencia: No se pudieron guardar las credenciales: " + err.Error())
+						}
+					}
+
 					if err := a.sendFns.Password(password); err != nil {
 						a.addLog("Error al enviar contraseña: " + err.Error())
 					}
