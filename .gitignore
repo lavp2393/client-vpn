@@ -1,6 +1,8 @@
-# Binarios
-navtunnel
-preyvpn
+# Binarios (solo en raíz y dist/)
+/navtunnel
+/preyvpn
+dist/navtunnel
+dist/preyvpn
 *.exe
 *.dll
 *.so
