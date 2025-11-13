@@ -454,8 +454,11 @@ Para más detalles sobre la arquitectura y cómo implementar estas característi
 
 ## Soporte
 
-Para reportar problemas o solicitar características, contacta al equipo de desarrollo.
+Para reportar problemas o solicitar características, abre un issue en el repositorio:
+https://github.com/lavp2393/client-vpn/issues
 
 ## Licencia
 
-[Especificar licencia según tu organización]
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+Copyright (c) 2025 Luis Alejandro Vazquez
