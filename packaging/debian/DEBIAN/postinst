@@ -1,5 +1,5 @@
 #!/bin/bash
-# postinst script para preyvpn
+# postinst script para navtunnel
 # Configura sudo para que no pida contraseña al ejecutar OpenVPN
 
 set -e
@@ -16,14 +16,14 @@ case "$1" in
         done
 
         if [ -z "$OPENVPN_PATH" ]; then
-            echo "⚠️  ADVERTENCIA: OpenVPN no encontrado. PreyVPN necesita OpenVPN instalado."
+            echo "⚠️  ADVERTENCIA: OpenVPN no encontrado. NavTunnel necesita OpenVPN instalado."
             echo "   Instálalo con: sudo apt install openvpn"
         else
-            # Crear archivo sudoers para PreyVPN
-            SUDOERS_FILE="/etc/sudoers.d/preyvpn"
+            # Crear archivo sudoers para NavTunnel
+            SUDOERS_FILE="/etc/sudoers.d/navtunnel"
 
             # Crear configuración que permite a TODOS los usuarios ejecutar openvpn sin contraseña
-            echo "# PreyVPN - Permitir ejecutar OpenVPN sin contraseña" > "$SUDOERS_FILE"
+            echo "# NavTunnel - Permitir ejecutar OpenVPN sin contraseña" > "$SUDOERS_FILE"
             echo "ALL ALL=(ALL) NOPASSWD: $OPENVPN_PATH" >> "$SUDOERS_FILE"
 
             # Configurar permisos correctos (CRÍTICO para sudoers)
@@ -31,7 +31,7 @@ case "$1" in
 
             # Validar sintaxis
             if visudo -c -f "$SUDOERS_FILE" >/dev/null 2>&1; then
-                echo "✅ PreyVPN configurado correctamente"
+                echo "✅ NavTunnel configurado correctamente"
                 echo "   Los usuarios pueden ejecutar OpenVPN sin contraseña"
             else
                 echo "❌ Error en configuración de sudo, eliminando..."

@@ -2,7 +2,7 @@
 
 package platform
 
-import "github.com/prey/preyvpn/internal/platform/linux"
+import "github.com/lavp2393/navtunnel/internal/platform/linux"
 
 // linuxAdapter adapta linux.LinuxPlatform a la interfaz Platform
 type linuxAdapter struct {

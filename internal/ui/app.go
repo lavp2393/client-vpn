@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/prey/preyvpn/internal/config"
-	"github.com/prey/preyvpn/internal/core"
-	"github.com/prey/preyvpn/internal/logs"
-	"github.com/prey/preyvpn/internal/tray"
+	"github.com/lavp2393/navtunnel/internal/config"
+	"github.com/lavp2393/navtunnel/internal/core"
+	"github.com/lavp2393/navtunnel/internal/logs"
+	"github.com/lavp2393/navtunnel/internal/tray"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -84,7 +84,7 @@ func NewApp() *App {
 	}
 	a.config = cfg
 
-	a.window = a.fyneApp.NewWindow("PreyVPN")
+	a.window = a.fyneApp.NewWindow("NavTunnel")
 	a.window.Resize(fyne.NewSize(700, 500))
 
 	// Configurar comportamiento al cerrar: minimizar a tray en vez de salir
@@ -176,7 +176,7 @@ func (a *App) buildUI() {
 
 	content := container.NewBorder(
 		container.NewVBox(
-			widget.NewLabel("PreyVPN - Cliente OpenVPN"),
+			widget.NewLabel("NavTunnel - Cliente OpenVPN"),
 			widget.NewSeparator(),
 			a.configStatus,
 			a.statusLabel,
@@ -518,13 +518,13 @@ func fallbackCredentialsPathLabel() string {
 	if path := core.GetCredentialsFallbackPath(); path != "" {
 		return path
 	}
-	return "~/.config/PreyVPN/credentials.json"
+	return "~/.config/NavTunnel/credentials.json"
 }
 
 // showWelcomeDialog muestra el diálogo de bienvenida para primera ejecución
 func (a *App) showWelcomeDialog() {
 	dialog.ShowCustom(
-		"👋 Bienvenido a PreyVPN",
+		"👋 Bienvenido a NavTunnel",
 		"Continuar",
 		widget.NewLabel("Para comenzar, necesitas seleccionar tu archivo de configuración VPN (.ovpn)"),
 		a.window,

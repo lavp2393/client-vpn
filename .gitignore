@@ -1,4 +1,5 @@
 # Binarios
+navtunnel
 preyvpn
 *.exe
 *.dll
@@ -23,6 +24,7 @@ vendor/
 # IDEs
 .idea/
 .vscode/
+.claude/
 *.swp
 *.swo
 *~
@@ -61,7 +63,9 @@ env/
 
 # Configuración local de usuario
 .config/PreyVPN/
+.config/NavTunnel/
 config.json
 
 # Archivos temporales de empaquetado
 packaging/debian/usr/bin/preyvpn
+packaging/debian/usr/bin/navtunnel

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/prey/preyvpn/internal/platform"
+	"github.com/lavp2393/navtunnel/internal/platform"
 )
 
 // OpenVPNProcess encapsula el proceso de OpenVPN con abstracción de plataforma

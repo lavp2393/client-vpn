@@ -1,6 +1,6 @@
-# Guía de Compilación y Packaging - PreyVPN
+# Guía de Compilación y Packaging - NavTunnel
 
-Esta guía explica cómo compilar PreyVPN y crear el paquete .deb **sin necesidad de instalar Go ni dependencias** en tu máquina.
+Esta guía explica cómo compilar NavTunnel y crear el paquete .deb **sin necesidad de instalar Go ni dependencias** en tu máquina.
 
 ## 🎯 Compilación con Docker (Recomendado)
 
@@ -35,7 +35,7 @@ task build-docker
 task build-docker-release
 ```
 
-El binario estará en `./dist/preyvpn`
+El binario estará en `./dist/navtunnel`
 
 ---
 
@@ -46,7 +46,7 @@ El binario estará en `./dist/preyvpn`
 ./dev.sh build-binary
 ```
 
-El binario estará en `./dist/preyvpn`
+El binario estará en `./dist/navtunnel`
 
 ---
 
@@ -57,15 +57,15 @@ El binario estará en `./dist/preyvpn`
 mkdir -p dist
 
 # 2. Construir imagen de compilación
-docker build -f Dockerfile.build -t preyvpn-builder --target builder .
+docker build -f Dockerfile.build -t navtunnel-builder --target builder .
 
 # 3. Compilar y extraer binario
-docker run --rm -v $(pwd)/dist:/output preyvpn-builder \
-    sh -c "cp /build/preyvpn /output/ && chmod +x /output/preyvpn"
+docker run --rm -v $(pwd)/dist:/output navtunnel-builder \
+    sh -c "cp /build/navtunnel /output/ && chmod +x /output/navtunnel"
 
 # 4. Verificar el binario
-ls -lh dist/preyvpn
-file dist/preyvpn
+ls -lh dist/navtunnel
+file dist/navtunnel
 ```
 
 ---
@@ -86,15 +86,15 @@ file dist/preyvpn
 
 ```bash
 # Verificar que existe
-ls -lh dist/preyvpn
+ls -lh dist/navtunnel
 
 # Ejecutar
-./dist/preyvpn
+./dist/navtunnel
 ```
 
 **Requisitos para ejecutar:**
 - OpenVPN instalado: `sudo apt install openvpn`
-- Archivo de configuración en: `~/PreyVPN/prey-prod.ovpn`
+- Archivo de configuración en: `~/NavTunnel/tu-archivo.ovpn`
 
 ---
 
@@ -107,30 +107,30 @@ ls -lh dist/preyvpn
 task build-docker
 
 # ARM64 (Raspberry Pi 4, servidores ARM)
-docker build -f Dockerfile.build -t preyvpn-builder \
+docker build -f Dockerfile.build -t navtunnel-builder \
     --build-arg GOARCH=arm64 --target builder .
-docker run --rm -v $(pwd)/dist:/output preyvpn-builder \
-    sh -c "cp /build/preyvpn /output/preyvpn-arm64 && chmod +x /output/preyvpn-arm64"
+docker run --rm -v $(pwd)/dist:/output navtunnel-builder \
+    sh -c "cp /build/navtunnel /output/navtunnel-arm64 && chmod +x /output/navtunnel-arm64"
 ```
 
 ### Windows (cross-compilation desde Linux)
 
 ```bash
 # Requiere mingw-w64 en la imagen
-docker build -f Dockerfile.build -t preyvpn-builder-windows \
+docker build -f Dockerfile.build -t navtunnel-builder-windows \
     --build-arg GOOS=windows --build-arg GOARCH=amd64 --target builder .
-docker run --rm -v $(pwd)/dist:/output preyvpn-builder-windows \
-    sh -c "cp /build/preyvpn.exe /output/"
+docker run --rm -v $(pwd)/dist:/output navtunnel-builder-windows \
+    sh -c "cp /build/navtunnel.exe /output/"
 ```
 
 ### macOS (cross-compilation desde Linux)
 
 ```bash
 # Requiere osxcross en la imagen
-docker build -f Dockerfile.build -t preyvpn-builder-darwin \
+docker build -f Dockerfile.build -t navtunnel-builder-darwin \
     --build-arg GOOS=darwin --build-arg GOARCH=amd64 --target builder .
-docker run --rm -v $(pwd)/dist:/output preyvpn-builder-darwin \
-    sh -c "cp /build/preyvpn /output/preyvpn-darwin"
+docker run --rm -v $(pwd)/dist:/output navtunnel-builder-darwin \
+    sh -c "cp /build/navtunnel /output/navtunnel-darwin"
 ```
 
 ---
@@ -150,14 +150,14 @@ sudo systemctl start docker
 ### Error: "permission denied" al ejecutar el binario
 
 ```bash
-chmod +x dist/preyvpn
+chmod +x dist/navtunnel
 ```
 
 ### El binario no se creó
 
 ```bash
 # Ver logs de compilación
-docker build -f Dockerfile.build -t preyvpn-builder --target builder . 2>&1 | tee build.log
+docker build -f Dockerfile.build -t navtunnel-builder --target builder . 2>&1 | tee build.log
 ```
 
 ### Limpiar cache de Docker
@@ -169,7 +169,7 @@ Si necesitas recompilar desde cero:
 docker builder prune -a
 
 # O eliminar la imagen y reconstruir
-docker rmi preyvpn-builder
+docker rmi navtunnel-builder
 task build-docker
 ```
 
@@ -201,13 +201,13 @@ task build-docker
 3. **Verificar el binario**:
    ```bash
    # Ver información del archivo
-   file dist/preyvpn
+   file dist/navtunnel
 
    # Ver tamaño
-   ls -lh dist/preyvpn
+   ls -lh dist/navtunnel
 
    # Ver dependencias dinámicas
-   ldd dist/preyvpn
+   ldd dist/navtunnel
    ```
 
 4. **Optimizar tamaño**:
@@ -251,7 +251,7 @@ El binario está compilado para Linux genérico y debería funcionar en:
 
 ### ¿Puedo distribuir el binario compilado?
 
-Sí, el binario en `dist/preyvpn` es autocontenido y puede distribuirse a otros usuarios de Linux. Solo necesitan tener OpenVPN instalado.
+Sí, el binario en `dist/navtunnel` es autocontenido y puede distribuirse a otros usuarios de Linux. Solo necesitan tener OpenVPN instalado.
 
 ### ¿Cómo actualizar las dependencias?
 
@@ -261,7 +261,7 @@ go get -u ./...
 go mod tidy
 
 # Reconstruir imagen sin cache
-docker build --no-cache -f Dockerfile.build -t preyvpn-builder --target builder .
+docker build --no-cache -f Dockerfile.build -t navtunnel-builder --target builder .
 ```
 
 ---
@@ -270,7 +270,7 @@ docker build --no-cache -f Dockerfile.build -t preyvpn-builder --target builder 
 
 ### Requisitos
 
-- Binario compilado en `dist/preyvpn`
+- Binario compilado en `dist/navtunnel`
 - Python 3 con PIL (Pillow) para generar el icono
 - `dpkg-deb` (viene instalado en Ubuntu/Debian)
 - Opcionalmente: `fakeroot` (recomendado)
@@ -283,8 +283,8 @@ docker build --no-cache -f Dockerfile.build -t preyvpn-builder --target builder 
 # O
 task build-docker
 
-# El binario estará en dist/preyvpn
-ls -lh dist/preyvpn
+# El binario estará en dist/navtunnel
+ls -lh dist/navtunnel
 ```
 
 ### Paso 2: Generar el icono de la aplicación
@@ -298,7 +298,7 @@ cd packaging
 python3 create-icon.py
 
 # Verificar que se creó
-ls -lh debian/usr/share/icons/hicolor/256x256/apps/preyvpn.png
+ls -lh debian/usr/share/icons/hicolor/256x256/apps/navtunnel.png
 cd ..
 ```
 
@@ -311,7 +311,7 @@ cd packaging
 ./build-deb.sh
 
 # El paquete se creará en dist/
-ls -lh ../dist/preyvpn_1.0.0_amd64.deb
+ls -lh ../dist/navtunnel_1.0.0_amd64.deb
 ```
 
 ### Proceso completo en un solo comando
@@ -326,41 +326,41 @@ cd packaging && python3 create-icon.py && cd ..
 # Construir .deb
 cd packaging && ./build-deb.sh && cd ..
 
-# ¡Listo! El paquete está en dist/preyvpn_1.0.0_amd64.deb
+# ¡Listo! El paquete está en dist/navtunnel_1.0.0_amd64.deb
 ```
 
 ### Verificar el paquete
 
 ```bash
 # Ver información del paquete
-dpkg-deb --info dist/preyvpn_1.0.0_amd64.deb
+dpkg-deb --info dist/navtunnel_1.0.0_amd64.deb
 
 # Ver contenido del paquete
-dpkg-deb --contents dist/preyvpn_1.0.0_amd64.deb
+dpkg-deb --contents dist/navtunnel_1.0.0_amd64.deb
 
 # Verificar dependencias
-dpkg-deb --field dist/preyvpn_1.0.0_amd64.deb Depends
+dpkg-deb --field dist/navtunnel_1.0.0_amd64.deb Depends
 ```
 
 ### Probar la instalación
 
 ```bash
 # Instalar el paquete
-sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb
+sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb
 
 # Si hay errores de dependencias
 sudo apt-get install -f
 
 # Verificar que se instaló
-which preyvpn
-dpkg -l | grep preyvpn
+which navtunnel
+dpkg -l | grep navtunnel
 
 # Ejecutar desde el menú de aplicaciones
 # O desde terminal:
-preyvpn
+navtunnel
 
 # Desinstalar (si quieres)
-sudo apt remove preyvpn
+sudo apt remove navtunnel
 ```
 
 ---
@@ -377,12 +377,12 @@ packaging/debian/
 │   └── prerm                  # Script que se ejecuta antes de desinstalar
 ├── usr/
 │   ├── bin/
-│   │   └── preyvpn           # Binario copiado de dist/
+│   │   └── navtunnel           # Binario copiado de dist/
 │   └── share/
 │       ├── applications/
-│       │   └── preyvpn.desktop  # Entrada en el menú de aplicaciones
+│       │   └── navtunnel.desktop  # Entrada en el menú de aplicaciones
 │       └── icons/hicolor/256x256/apps/
-│           └── preyvpn.png      # Icono de la aplicación
+│           └── navtunnel.png      # Icono de la aplicación
 ```
 
 ### Archivos importantes
@@ -390,23 +390,23 @@ packaging/debian/
 #### control
 Define el paquete y sus dependencias:
 ```
-Package: preyvpn
+Package: navtunnel
 Version: 1.0.0
 Architecture: amd64
 Depends: openvpn, policykit-1, libgl1, libayatana-appindicator3-1, ...
 ```
 
 #### postinst
-Configura `/etc/sudoers.d/preyvpn` para que **todos los usuarios** puedan ejecutar openvpn sin password:
+Configura `/etc/sudoers.d/navtunnel` para que **todos los usuarios** puedan ejecutar openvpn sin password:
 ```bash
-echo "ALL ALL=(ALL) NOPASSWD: /usr/sbin/openvpn" > /etc/sudoers.d/preyvpn
-chmod 0440 /etc/sudoers.d/preyvpn
+echo "ALL ALL=(ALL) NOPASSWD: /usr/sbin/openvpn" > /etc/sudoers.d/navtunnel
+chmod 0440 /etc/sudoers.d/navtunnel
 ```
 
 #### prerm
 Limpia la configuración de sudo al desinstalar:
 ```bash
-rm -f /etc/sudoers.d/preyvpn
+rm -f /etc/sudoers.d/navtunnel
 ```
 
 ---
@@ -425,7 +425,7 @@ Edita `packaging/debian/DEBIAN/control` - línea `Depends:`
 
 ### Cambiar el icono
 
-Reemplaza `packaging/debian/usr/share/icons/hicolor/256x256/apps/preyvpn.png` con tu propio icono PNG de 256x256.
+Reemplaza `packaging/debian/usr/share/icons/hicolor/256x256/apps/navtunnel.png` con tu propio icono PNG de 256x256.
 
 ### Agregar más archivos
 
@@ -433,8 +433,8 @@ Agrega archivos en `packaging/debian/usr/` siguiendo la estructura de directorio
 
 Por ejemplo, para agregar documentación:
 ```bash
-mkdir -p packaging/debian/usr/share/doc/preyvpn
-cp README.md packaging/debian/usr/share/doc/preyvpn/
+mkdir -p packaging/debian/usr/share/doc/navtunnel
+cp README.md packaging/debian/usr/share/doc/navtunnel/
 ```
 
 ---
@@ -444,7 +444,7 @@ cp README.md packaging/debian/usr/share/doc/preyvpn/
 ### Error: "control file must have a newline at end"
 Asegúrate de que `packaging/debian/DEBIAN/control` tenga una línea vacía al final.
 
-### Error: "cannot stat 'dist/preyvpn': No such file or directory"
+### Error: "cannot stat 'dist/navtunnel': No such file or directory"
 Compila el binario primero con `./dev.sh build-binary`
 
 ### Error: "Installed-Size appears twice"
@@ -456,14 +456,14 @@ Usa `sudo apt-get install -f` después de instalar con dpkg.
 ### Los permisos no funcionan después de instalar
 Verifica que el script postinst se ejecutó:
 ```bash
-cat /etc/sudoers.d/preyvpn
+cat /etc/sudoers.d/navtunnel
 # Debería mostrar: ALL ALL=(ALL) NOPASSWD: /usr/sbin/openvpn
 ```
 
 Si no existe, reinstala:
 ```bash
-sudo apt remove preyvpn
-sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb
+sudo apt remove navtunnel
+sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb
 ```
 
 ---

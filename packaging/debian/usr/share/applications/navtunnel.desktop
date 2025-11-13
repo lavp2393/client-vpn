@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=PreyVPN
+Name=NavTunnel
 GenericName=VPN Client
 Comment=Cliente OpenVPN con autenticación multi-factor
-Icon=preyvpn
-Exec=/usr/bin/preyvpn
+Icon=navtunnel
+Exec=/usr/bin/navtunnel
 Terminal=false
 Categories=Network;
-Keywords=vpn;openvpn;network;security;
+Keywords=vpn;openvpn;network;security;tunnel;
 StartupNotify=true
-StartupWMClass=PreyVPN
+StartupWMClass=NavTunnel

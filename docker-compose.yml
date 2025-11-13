@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  preyvpn:
+  navtunnel:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         USER_ID: ${UID:-1000}
         GROUP_ID: ${GID:-1000}
-    container_name: preyvpn-dev
+    container_name: navtunnel-dev
 
     # Montar X11 socket para GUI
     volumes:
@@ -16,8 +16,9 @@ services:
       - .:/app
       # X11 socket
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      # Configuración VPN (si existe)
+      # Configuración VPN (si existe - legacy path, ahora se usa file picker)
       - ${HOME}/PreyVPN:/home/developer/PreyVPN:ro
+      - ${HOME}/.config/NavTunnel:/home/developer/.config/NavTunnel
       # Cache de Go modules (para velocidad)
       - go-modules:/go/pkg/mod
       # Binarios compilados

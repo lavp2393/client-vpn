@@ -2,7 +2,7 @@
 
 package platform
 
-import "github.com/prey/preyvpn/internal/platform/windows"
+import "github.com/lavp2393/navtunnel/internal/platform/windows"
 
 // windowsAdapter adapta windows.WindowsPlatform a la interfaz Platform
 type windowsAdapter struct {

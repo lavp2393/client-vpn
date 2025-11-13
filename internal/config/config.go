@@ -34,7 +34,7 @@ func getConfigPath() (string, error) {
 		configHome = filepath.Join(homeDir, ".config")
 	}
 
-	configDir := filepath.Join(configHome, "PreyVPN")
+	configDir := filepath.Join(configHome, "NavTunnel")
 
 	// Crear directorio si no existe
 	if err := os.MkdirAll(configDir, 0755); err != nil {
@@ -114,7 +114,7 @@ func GetConfigDir() (string, error) {
 		configHome = filepath.Join(homeDir, ".config")
 	}
 
-	return filepath.Join(configHome, "PreyVPN"), nil
+	return filepath.Join(configHome, "NavTunnel"), nil
 }
 
 // Default retorna una configuración por defecto

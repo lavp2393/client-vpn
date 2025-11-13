@@ -1,4 +1,4 @@
-# PreyVPN - Entorno de Desarrollo Docker
+# NavTunnel - Entorno de Desarrollo Docker
 
 Este proyecto está configurado con Docker, docker-compose y Taskfile para desarrollo rápido y reproducible.
 
@@ -51,7 +51,7 @@ task exec CMD="tail -100 build-errors.log"
 
 ## 🏗️ Compilación sin Dependencias Locales
 
-**Importante:** Puedes compilar PreyVPN usando Docker **SIN necesidad de instalar Go ni dependencias** en tu PC.
+**Importante:** Puedes compilar NavTunnel usando Docker **SIN necesidad de instalar Go ni dependencias** en tu PC.
 
 ```bash
 # Compilar binario (NO requiere Go instalado)
@@ -60,8 +60,8 @@ task build-docker
 # O con dev.sh
 ./dev.sh build-binary
 
-# El binario estará en ./dist/preyvpn
-./dist/preyvpn
+# El binario estará en ./dist/navtunnel
+./dist/navtunnel
 ```
 
 Ver [BUILD.md](BUILD.md) para documentación completa.
@@ -145,8 +145,8 @@ task exec CMD="sudo openvpn --version"
 task exec-sh
 
 # Dentro del container, puedes:
-developer@container:/app$ go build ./cmd/preyvpn
-developer@container:/app$ sudo openvpn --config ~/PreyVPN/prey-prod.ovpn
+developer@container:/app$ go build ./cmd/navtunnel
+developer@container:/app$ sudo openvpn --config ~/NavTunnel/tu-archivo.ovpn
 ```
 
 ## 🖥️ Desarrollo con GUI
@@ -178,7 +178,7 @@ task restart
 Host                          → Container
 ──────────────────────────────────────────────────
 ./                            → /app (código fuente)
-~/PreyVPN/                    → /home/developer/PreyVPN (configs VPN)
+~/NavTunnel/                    → /home/developer/NavTunnel (configs VPN)
 /tmp/.X11-unix                → /tmp/.X11-unix (X11 socket)
 ```
 
@@ -233,7 +233,7 @@ task exec-sh
 
 # Dentro del container
 go install github.com/go-delve/delve/cmd/dlv@latest
-dlv debug ./cmd/preyvpn
+dlv debug ./cmd/navtunnel
 ```
 
 ## 📦 Compilar Binario de Producción
@@ -242,9 +242,9 @@ dlv debug ./cmd/preyvpn
 # Compilar dentro del container
 task compile
 
-# El binario estará en ./tmp/preyvpn
+# El binario estará en ./tmp/navtunnel
 # Copiarlo al host si es necesario
-cp tmp/preyvpn ./preyvpn-linux-amd64
+cp tmp/navtunnel ./navtunnel-linux-amd64
 ```
 
 ## 🔄 Actualizar Dependencias

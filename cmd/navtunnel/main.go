@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/prey/preyvpn/internal/ui"
+	"github.com/lavp2393/navtunnel/internal/ui"
 )
 
 func main() {

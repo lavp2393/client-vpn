@@ -1,4 +1,4 @@
-# PreyVPN - Arquitectura Multi-Plataforma
+# NavTunnel - Arquitectura Multi-Plataforma
 
 ## Última actualización: 2025-11-11
 
@@ -6,7 +6,7 @@
 
 ## Visión General
 
-PreyVPN es un cliente OpenVPN con interfaz gráfica diseñado para usuarios no técnicos, que soporta múltiples plataformas mediante una arquitectura modular y abstracciones específicas por sistema operativo.
+NavTunnel es un cliente OpenVPN con interfaz gráfica diseñado para usuarios no técnicos, que soporta múltiples plataformas mediante una arquitectura modular y abstracciones específicas por sistema operativo.
 
 **Filosofía de diseño:**
 - 100% GUI, cero uso de terminal
@@ -29,7 +29,7 @@ PreyVPN es un cliente OpenVPN con interfaz gráfica diseñado para usuarios no t
 ```
 binariovpnprey/
 ├── cmd/
-│   └── preyvpn/
+│   └── navtunnel/
 │       └── main.go                    # Entry point común para todas las plataformas
 │
 ├── internal/
@@ -64,7 +64,7 @@ binariovpnprey/
 │   │       └── error.png              # Rojo
 │   │
 │   ├── config/                        # ⭐ Configuración persistente (NEW)
-│   │   └── config.go                  # Gestión de config.json (~/.config/PreyVPN/)
+│   │   └── config.go                  # Gestión de config.json (~/.config/NavTunnel/)
 │   │
 │   ├── ui/
 │   │   ├── app.go                     # UI común (Fyne es cross-platform)
@@ -85,9 +85,9 @@ binariovpnprey/
 │           ├── bin/                   # Destino del binario
 │           └── share/
 │               ├── applications/
-│               │   └── preyvpn.desktop
+│               │   └── navtunnel.desktop
 │               └── icons/hicolor/256x256/apps/
-│                   └── preyvpn.png
+│                   └── navtunnel.png
 │
 ├── build/                             # Scripts de build por plataforma
 │   ├── linux/
@@ -95,8 +95,8 @@ binariovpnprey/
 │   └── darwin/
 │
 ├── dist/                              # Binarios compilados y paquetes
-│   ├── preyvpn                        # Binario Linux
-│   ├── preyvpn_1.0.0_amd64.deb       # Paquete Debian
+│   ├── navtunnel                        # Binario Linux
+│   ├── navtunnel_1.0.0_amd64.deb       # Paquete Debian
 │   ├── linux-amd64/
 │   ├── linux-arm64/
 │   ├── windows-amd64/
@@ -106,7 +106,7 @@ binariovpnprey/
 │
 ├── configs/                           # Configuraciones por plataforma
 │   ├── linux/
-│   │   └── preyvpn.desktop           # Desktop entry para Linux
+│   │   └── navtunnel.desktop           # Desktop entry para Linux
 │   ├── windows/
 │   │   └── README.md                 # Guía para iconos, manifests, etc.
 │   └── darwin/
@@ -120,7 +120,7 @@ binariovpnprey/
 ├── ARCHITECTURE.md                    # Este archivo
 ├── BUILD.md                           # Documentación de compilación
 ├── USAGE.md                           # Guía de uso
-├── PreyVPN_Spec_MVP.md
+├── NavTunnel_Spec_MVP.md
 └── TECHNICAL_CONTEXT.md
 ```
 
@@ -181,7 +181,7 @@ Los archivos `platform_*.go` tienen build tags:
 
 ## System Tray Abstraction
 
-PreyVPN incluye una abstracción para el system tray que permite cambiar de implementación sin afectar el resto del código.
+NavTunnel incluye una abstracción para el system tray que permite cambiar de implementación sin afectar el resto del código.
 
 ### Interface `tray.TrayIcon`
 
@@ -321,9 +321,9 @@ O continuar usando getlantern/systray que ya funciona bien en macOS.
 El sistema de configuración usa JSON para persistir preferencias del usuario.
 
 **Ubicación por plataforma:**
-- **Linux:** `~/.config/PreyVPN/config.json` (XDG Base Directory)
-- **Windows:** `%APPDATA%\PreyVPN\config.json`
-- **macOS:** `~/Library/Application Support/PreyVPN/config.json`
+- **Linux:** `~/.config/NavTunnel/config.json` (XDG Base Directory)
+- **Windows:** `%APPDATA%\NavTunnel\config.json`
+- **macOS:** `~/Library/Application Support/NavTunnel/config.json`
 
 **Estructura actual:**
 
@@ -349,10 +349,10 @@ type Config struct {
 **Script:** `packaging/build-deb.sh`
 
 El paquete .deb incluye:
-- Binario en `/usr/bin/preyvpn`
+- Binario en `/usr/bin/navtunnel`
 - Desktop entry en `/usr/share/applications/`
 - Icono en `/usr/share/icons/hicolor/256x256/apps/`
-- Script `postinst` que configura `/etc/sudoers.d/preyvpn` automáticamente
+- Script `postinst` que configura `/etc/sudoers.d/navtunnel` automáticamente
 - Script `prerm` que limpia la configuración
 
 **Dependencias automáticas** (definidas en `debian/DEBIAN/control`):
@@ -363,12 +363,12 @@ libxdamage1, libxcomposite1, libayatana-appindicator3-1, libdbus-1-3,
 libglib2.0-0, libgtk-3-0, libcairo2, libpango-1.0-0
 ```
 
-**Ventaja:** El usuario solo ejecuta `sudo dpkg -i preyvpn.deb` y todo se configura automáticamente.
+**Ventaja:** El usuario solo ejecuta `sudo dpkg -i navtunnel.deb` y todo se configura automáticamente.
 
 ### Windows (.msi) - Futuro
 
 Usar WiX Toolset para crear un instalador MSI que:
-- Instale el binario en `C:\Program Files\PreyVPN\`
+- Instale el binario en `C:\Program Files\NavTunnel\`
 - Cree entrada en el menú de inicio
 - Configure permisos para OpenVPN
 - Registre el servicio si es necesario
@@ -376,7 +376,7 @@ Usar WiX Toolset para crear un instalador MSI que:
 ### macOS (.dmg + .app) - Futuro
 
 Crear un bundle .app con:
-- `PreyVPN.app/Contents/MacOS/preyvpn` (binario)
+- `NavTunnel.app/Contents/MacOS/navtunnel` (binario)
 - `Info.plist` con metadata
 - Iconos ICNS
 - Firmar con certificado de desarrollador
@@ -391,11 +391,11 @@ Crear un bundle .app con:
 | Aspecto | Implementación |
 |---------|----------------|
 | **OpenVPN Path** | `/usr/sbin/openvpn`, `/usr/bin/openvpn` |
-| **Config Dir** | `~/.config/PreyVPN` (XDG spec) o `~/PreyVPN` (MVP) |
-| **Log Path** | `~/.cache/PreyVPN/logs` |
+| **Config Dir** | `~/.config/NavTunnel` (XDG spec) o `~/NavTunnel` (MVP) |
+| **Log Path** | `~/.cache/NavTunnel/logs` |
 | **Elevation** | `pkexec` (PolicyKit) |
 | **Packaging** | .deb, .rpm, AppImage (futuro) |
-| **Desktop Entry** | `configs/linux/preyvpn.desktop` |
+| **Desktop Entry** | `configs/linux/navtunnel.desktop` |
 
 **Dependencias:**
 - `openvpn`
@@ -407,11 +407,11 @@ Crear un bundle .app con:
 | Aspecto | Implementación |
 |---------|----------------|
 | **OpenVPN Path** | `C:\Program Files\OpenVPN\bin\openvpn.exe` |
-| **Config Dir** | `%APPDATA%\PreyVPN` |
-| **Log Path** | `%LOCALAPPDATA%\PreyVPN\logs` |
+| **Config Dir** | `%APPDATA%\NavTunnel` |
+| **Log Path** | `%LOCALAPPDATA%\NavTunnel\logs` |
 | **Elevation** | UAC / `runas` / ShellExecute |
 | **Packaging** | .msi, .exe installer (NSIS/WiX) |
-| **Icon** | `configs/windows/preyvpn.ico` |
+| **Icon** | `configs/windows/navtunnel.ico` |
 
 **TODOs:**
 - [ ] Implementar elevación con UAC
@@ -424,8 +424,8 @@ Crear un bundle .app con:
 | Aspecto | Implementación |
 |---------|----------------|
 | **OpenVPN Path** | `/usr/local/opt/openvpn/sbin/openvpn` (Homebrew) |
-| **Config Dir** | `~/Library/Application Support/PreyVPN` |
-| **Log Path** | `~/Library/Logs/PreyVPN` |
+| **Config Dir** | `~/Library/Application Support/NavTunnel` |
+| **Log Path** | `~/Library/Logs/NavTunnel` |
 | **Elevation** | `osascript` (AppleScript) / SMJobBless |
 | **Packaging** | .app bundle, .dmg |
 | **Bundle Info** | `configs/darwin/Info.plist` |
@@ -477,10 +477,10 @@ Go soporta cross-compilation de forma nativa:
 
 ```bash
 # Desde Linux, compilar para Windows
-GOOS=windows GOARCH=amd64 go build -o preyvpn.exe cmd/preyvpn/main.go
+GOOS=windows GOARCH=amd64 go build -o navtunnel.exe cmd/navtunnel/main.go
 
 # Desde Linux, compilar para macOS Apple Silicon
-GOOS=darwin GOARCH=arm64 go build -o preyvpn cmd/preyvpn/main.go
+GOOS=darwin GOARCH=arm64 go build -o navtunnel cmd/navtunnel/main.go
 ```
 
 ### Limitaciones de Cross-Compilation
@@ -585,4 +585,4 @@ strategy:
 ---
 
 **Última revisión:** 2025-11-04
-**Mantenedor:** Equipo PreyVPN
+**Mantenedor:** Equipo NavTunnel

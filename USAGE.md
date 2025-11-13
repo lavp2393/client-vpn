@@ -1,11 +1,11 @@
-# PreyVPN - Guía de Uso
+# NavTunnel - Guía de Uso
 
 ## 🚀 Instalación Recomendada (con .deb)
 
-La forma más fácil de instalar PreyVPN es usar el paquete .deb:
+La forma más fácil de instalar NavTunnel es usar el paquete .deb:
 
 ```bash
-sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb
+sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb
 
 # Si hay errores de dependencias:
 sudo apt-get install -f
@@ -16,28 +16,28 @@ sudo apt-get install -f
 - ✅ Configura permisos de sudo automáticamente (no necesitarás password para openvpn)
 - ✅ Crea entrada en el menú de aplicaciones
 - ✅ Instala el icono del sistema
-- ✅ Desinstalación limpia: `sudo apt remove preyvpn`
+- ✅ Desinstalación limpia: `sudo apt remove navtunnel`
 
 ### Ejecutar después de instalar
 
 **Desde el menú de aplicaciones:**
 1. Presiona la tecla Super (Windows) o abre el menú de aplicaciones
-2. Busca "PreyVPN"
+2. Busca "NavTunnel"
 3. Haz clic en el icono
 
 **Desde terminal:**
 ```bash
-preyvpn
+navtunnel
 ```
 
 ### ⚠️ IMPORTANTE: NO uses `sudo`
 
 ```bash
 # ❌ INCORRECTO
-sudo preyvpn
+sudo navtunnel
 
 # ✅ CORRECTO
-preyvpn
+navtunnel
 ```
 
 **¿Por qué?**
@@ -51,7 +51,7 @@ Si solo compilaste el binario sin instalar el paquete:
 
 ```bash
 # Ejecutar desde el directorio del proyecto
-./dist/preyvpn
+./dist/navtunnel
 ```
 
 **Nota:** Si no instalaste el .deb, necesitarás usar `pkexec` para elevar privilegios cada vez que conectes (te pedirá contraseña de administrador).
@@ -82,7 +82,7 @@ Haz clic derecho en el icono para ver:
 
 **Ya NO necesitas crear directorios manualmente ni renombrar archivos.**
 
-Al abrir PreyVPN por primera vez:
+Al abrir NavTunnel por primera vez:
 
 1. **Diálogo de bienvenida**
    - Aparece automáticamente si no tienes un archivo .ovpn configurado
@@ -96,13 +96,13 @@ Al abrir PreyVPN por primera vez:
 
 3. **Listo para conectar**
    - La aplicación recuerda tu archivo .ovpn entre sesiones
-   - La configuración se guarda en: `~/.config/PreyVPN/config.json`
+   - La configuración se guarda en: `~/.config/NavTunnel/config.json`
 
 ### Cambiar el archivo VPN
 
 Si necesitas usar un archivo .ovpn diferente:
 
-1. Abre PreyVPN
+1. Abre NavTunnel
 2. Haz clic en el botón **"Cambiar archivo VPN"** en la ventana principal
 3. Selecciona el nuevo archivo .ovpn
 4. ¡Listo! Ya puedes conectar con el nuevo perfil
@@ -114,17 +114,17 @@ Si necesitas usar un archivo .ovpn diferente:
 **Solución:** Ejecuta sin sudo:
 ```bash
 # Si instalaste con .deb:
-preyvpn
+navtunnel
 
 # Si solo compilaste:
-./dist/preyvpn
+./dist/navtunnel
 ```
 
 ### Error: "Se requiere contraseña de administrador" cada vez que conecto
 **Causa:** No instalaste el paquete .deb (que configura permisos automáticamente)
 **Solución:**
-1. Instala el paquete .deb: `sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb`
-2. Verifica que se configuró: `cat /etc/sudoers.d/preyvpn`
+1. Instala el paquete .deb: `sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb`
+2. Verifica que se configuró: `cat /etc/sudoers.d/navtunnel`
 3. Debería mostrar: `ALL ALL=(ALL) NOPASSWD: /usr/sbin/openvpn`
 
 ### Error: "pkexec no está disponible"
@@ -148,16 +148,16 @@ sudo apt-get install -f
 **Causa:** Puede tardar unos segundos en inicializarse
 **Solución:** Espera 2-3 segundos. Verás en los logs "System tray inicializado"
 
-### PreyVPN no aparece en el menú de aplicaciones
+### NavTunnel no aparece en el menú de aplicaciones
 **Causa:** No instalaste el paquete .deb
-**Solución:** Instala con el .deb: `sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb`
+**Solución:** Instala con el .deb: `sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb`
 
 ### No puedo seleccionar archivo .ovpn (el file picker no se abre)
 **Causa:** Puede haber un problema con Fyne o el sistema de archivos
 **Solución:**
 1. Verifica que tienes permisos de lectura en el directorio del .ovpn
 2. Intenta copiar el archivo a tu carpeta personal
-3. Revisa los logs en la ventana de PreyVPN para más detalles
+3. Revisa los logs en la ventana de NavTunnel para más detalles
 
 ## 🔧 Desarrollo
 
@@ -190,17 +190,17 @@ Los logs aparecen en la ventana principal en tiempo real:
 ## ⌨️ Atajos y Tips
 
 1. **Inicio rápido**: Copia el binario a `/usr/local/bin/` para ejecutarlo desde cualquier terminal
-2. **Auto-inicio**: Configura PreyVPN para iniciarse con el sistema (ver sección siguiente)
+2. **Auto-inicio**: Configura NavTunnel para iniciarse con el sistema (ver sección siguiente)
 3. **Múltiples ventanas**: La app solo permite una instancia a la vez
 
 ## 🚀 Auto-inicio (opcional)
 
-Crear archivo `~/.config/autostart/preyvpn.desktop`:
+Crear archivo `~/.config/autostart/navtunnel.desktop`:
 ```ini
 [Desktop Entry]
 Type=Application
-Name=PreyVPN
-Exec=/usr/local/bin/preyvpn
+Name=NavTunnel
+Exec=/usr/local/bin/navtunnel
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true

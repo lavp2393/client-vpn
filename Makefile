@@ -3,10 +3,10 @@
 .PHONY: build-all-arch clean-dist
 
 # Variables
-BINARY_NAME=preyvpn
+BINARY_NAME=navtunnel
 BUILD_DIR=bin
 DIST_DIR=dist
-MAIN_PATH=cmd/preyvpn/main.go
+MAIN_PATH=cmd/navtunnel/main.go
 VERSION?=dev
 BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
 LDFLAGS=-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME)
@@ -168,9 +168,9 @@ check-deps:
 # Preparar el directorio de configuración
 setup-config:
 	@echo "📁 Creando directorio de configuración..."
-	@mkdir -p ~/PreyVPN
-	@echo "✅ Directorio ~/PreyVPN creado"
-	@echo "💡 Por favor coloca tu archivo prey-prod.ovpn en ~/PreyVPN/"
+	@mkdir -p ~/.config/NavTunnel
+	@echo "✅ Directorio ~/.config/NavTunnel creado"
+	@echo "💡 La aplicación te pedirá seleccionar tu archivo .ovpn al iniciar"
 
 # Mostrar información del sistema
 info:
@@ -182,7 +182,7 @@ info:
 
 # Mostrar ayuda
 help:
-	@echo "PreyVPN - Makefile Multi-Platform"
+	@echo "NavTunnel - Makefile Multi-Platform"
 	@echo ""
 	@echo "📦 Desarrollo:"
 	@echo "  make deps           - Instalar dependencias de Go"

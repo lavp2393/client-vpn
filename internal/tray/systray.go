@@ -49,8 +49,8 @@ func (s *Systray) Run(onReady func(), onExit func()) {
 func (s *Systray) onReady() {
 	// Configurar icono y título inicial
 	systray.SetIcon(GetIconData(IconDisconnected))
-	systray.SetTitle("PreyVPN")
-	systray.SetTooltip("PreyVPN - Desconectado")
+	systray.SetTitle("NavTunnel")
+	systray.SetTooltip("NavTunnel - Desconectado")
 
 	// Crear menú
 	s.mStatus = systray.AddMenuItem("Estado: Desconectado", "Estado actual de la conexión")
@@ -68,7 +68,7 @@ func (s *Systray) onReady() {
 
 	systray.AddSeparator()
 
-	s.mQuit = systray.AddMenuItem("Salir", "Cerrar PreyVPN")
+	s.mQuit = systray.AddMenuItem("Salir", "Cerrar NavTunnel")
 
 	// Iniciar goroutines para manejar clics
 	go s.handleMenuActions()
@@ -138,7 +138,7 @@ func (s *Systray) UpdateState(state string, connected bool) {
 	}
 
 	// Actualizar tooltip
-	s.SetTooltip("PreyVPN - " + state)
+	s.SetTooltip("NavTunnel - " + state)
 
 	// Habilitar/deshabilitar botones según estado
 	// Solo si los items del menú están inicializados

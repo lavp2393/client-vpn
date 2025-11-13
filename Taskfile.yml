@@ -2,8 +2,8 @@ version: '3'
 
 # Variables globales
 vars:
-  PROJECT_NAME: preyvpn
-  SERVICE: preyvpn
+  PROJECT_NAME: navtunnel
+  SERVICE: navtunnel
 
 # Definiciones reutilizables (YAML anchors)
 tasks:
@@ -93,7 +93,7 @@ tasks:
     desc: "Ejecutar la aplicación manualmente dentro del container"
     cmds:
       - docker-compose exec {{.SERVICE}} sudo /usr/sbin/openvpn --version
-      - docker-compose exec {{.SERVICE}} ./tmp/preyvpn
+      - docker-compose exec {{.SERVICE}} ./tmp/navtunnel
 
   # === Compilación sin dependencias locales ===
 
@@ -102,27 +102,27 @@ tasks:
     cmds:
       - echo "🔨 Compilando con Docker (esto puede tomar 3-5 min la primera vez)..."
       - mkdir -p dist
-      - docker build -f Dockerfile.build -t preyvpn-builder --target builder .
-      - docker run --rm -v {{.PWD}}/dist:/output preyvpn-builder sh -c "cp /build/preyvpn /output/ && chmod +x /output/preyvpn"
-      - echo "✅ Binario compilado en ./dist/preyvpn"
-      - ls -lh dist/preyvpn
+      - docker build -f Dockerfile.build -t navtunnel-builder --target builder .
+      - docker run --rm -v {{.PWD}}/dist:/output navtunnel-builder sh -c "cp /build/navtunnel /output/ && chmod +x /output/navtunnel"
+      - echo "✅ Binario compilado en ./dist/navtunnel"
+      - ls -lh dist/navtunnel
 
   build-docker-release:
     desc: "Compilar binario optimizado para distribución usando Docker"
     cmds:
       - echo "🔨 Compilando versión release con Docker..."
       - mkdir -p dist
-      - docker build -f Dockerfile.build -t preyvpn-builder --target builder .
-      - docker run --rm -v {{.PWD}}/dist:/output preyvpn-builder sh -c "cp /build/preyvpn /output/preyvpn && strip /output/preyvpn && chmod +x /output/preyvpn"
-      - echo "✅ Binario optimizado compilado en ./dist/preyvpn"
-      - ls -lh dist/preyvpn
-      - file dist/preyvpn
+      - docker build -f Dockerfile.build -t navtunnel-builder --target builder .
+      - docker run --rm -v {{.PWD}}/dist:/output navtunnel-builder sh -c "cp /build/navtunnel /output/navtunnel && strip /output/navtunnel && chmod +x /output/navtunnel"
+      - echo "✅ Binario optimizado compilado en ./dist/navtunnel"
+      - ls -lh dist/navtunnel
+      - file dist/navtunnel
 
   compile:
     desc: "Compilar el binario dentro del container de desarrollo (requiere container corriendo)"
     cmds:
-      - docker-compose exec {{.SERVICE}} go build -o ./tmp/preyvpn ./cmd/preyvpn
-      - echo "✅ Binario compilado en ./tmp/preyvpn"
+      - docker-compose exec {{.SERVICE}} go build -o ./tmp/navtunnel ./cmd/navtunnel
+      - echo "✅ Binario compilado en ./tmp/navtunnel"
 
   test:
     desc: "Ejecutar tests dentro del container"
@@ -196,11 +196,11 @@ tasks:
     desc: "Verificar configuración VPN"
     cmds:
       - |
-        if [ -f ~/PreyVPN/prey-prod.ovpn ]; then
-          echo "✅ Archivo de configuración VPN encontrado"
-          ls -lh ~/PreyVPN/prey-prod.ovpn
+        if [ -f ~/.config/NavTunnel/config.json ]; then
+          echo "✅ Archivo de configuración encontrado"
+          cat ~/.config/NavTunnel/config.json
         else
-          echo "❌ Archivo de configuración VPN no encontrado en ~/PreyVPN/prey-prod.ovpn"
+          echo "❌ No hay configuración guardada. La app pedirá seleccionar archivo .ovpn al iniciar"
         fi
 
   help:

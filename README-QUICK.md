@@ -1,4 +1,4 @@
-# PreyVPN - Guía Rápida para Desarrollo
+# NavTunnel - Guía Rápida para Desarrollo
 
 Cliente OpenVPN con GUI que maneja autenticación multi-factor (usuario + contraseña + OTP).
 
@@ -16,16 +16,16 @@ task build-docker
 ./dev.sh build-binary
 ```
 
-**El binario compilado estará en:** `dist/preyvpn`
+**El binario compilado estará en:** `dist/navtunnel`
 
 ### Ejecutar el binario
 
 ```bash
 # Dar permisos si es necesario
-chmod +x dist/preyvpn
+chmod +x dist/navtunnel
 
 # Ejecutar
-./dist/preyvpn
+./dist/navtunnel
 ```
 
 ## 📋 Requisitos del Sistema
@@ -35,11 +35,11 @@ chmod +x dist/preyvpn
 
 ### Para ejecutar el binario
 - OpenVPN instalado: `sudo apt install openvpn`
-- Archivo de configuración en: `~/PreyVPN/prey-prod.ovpn`
+- Archivo de configuración en: `~/NavTunnel/tu-archivo.ovpn`
 - Sudo configurado para OpenVPN (opcional, facilita uso):
   ```bash
-  echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/openvpn" | sudo tee /etc/sudoers.d/preyvpn-openvpn
-  sudo chmod 0440 /etc/sudoers.d/preyvpn-openvpn
+  echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/openvpn" | sudo tee /etc/sudoers.d/navtunnel-openvpn
+  sudo chmod 0440 /etc/sudoers.d/navtunnel-openvpn
   ```
 
 ## 🛠️ Comandos Principales
@@ -81,7 +81,7 @@ task ps              # Ver containers corriendo
 
 ```
 binariovpnprey/
-├── cmd/preyvpn/main.go          # Punto de entrada
+├── cmd/navtunnel/main.go          # Punto de entrada
 ├── internal/
 │   ├── core/
 │   │   ├── manager.go           # Gestión OpenVPN + PTY para prompts interactivos
@@ -91,7 +91,7 @@ binariovpnprey/
 │   │   └── prompts.go           # Modales de autenticación
 │   └── platform/
 │       └── linux/               # Implementación específica de Linux
-├── dist/                        # ⭐ Binarios compilados (aquí está preyvpn)
+├── dist/                        # ⭐ Binarios compilados (aquí está navtunnel)
 ├── Dockerfile                   # Desarrollo con hot-reload
 ├── Dockerfile.build            # Compilación limpia
 ├── docker-compose.yml          # Servicios de desarrollo
@@ -114,14 +114,14 @@ binariovpnprey/
 
 **Documentación:**
 - `TECHNICAL_CONTEXT.md`: Análisis completo del problema OTP
-- `PreyVPN_Spec_MVP.md`: Especificación original
+- `NavTunnel_Spec_MVP.md`: Especificación original
 
 ## 🧪 Testing
 
 ```bash
 # Compilar y probar localmente
 task build-docker
-./dist/preyvpn
+./dist/navtunnel
 
 # O con Docker en desarrollo (hot-reload)
 task dev
@@ -146,7 +146,7 @@ cd binariovpnprey
 task build-docker
 
 # 3. Probar
-./dist/preyvpn
+./dist/navtunnel
 
 # 4. Desarrollar (con hot-reload)
 task dev
@@ -168,7 +168,7 @@ task logs
 ```bash
 task exec-sh
 # Dentro del container puedes:
-go build ./cmd/preyvpn
+go build ./cmd/navtunnel
 sudo openvpn --version
 ```
 
@@ -189,7 +189,7 @@ sudo systemctl start docker
 
 **"Permission denied" en el binario**
 ```bash
-chmod +x dist/preyvpn
+chmod +x dist/navtunnel
 ```
 
 **GUI no aparece**

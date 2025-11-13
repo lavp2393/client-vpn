@@ -1,4 +1,4 @@
-# Dockerfile para desarrollo de PreyVPN
+# Dockerfile para desarrollo de NavTunnel
 FROM golang:1.22-bookworm
 
 # Instalar dependencias del sistema

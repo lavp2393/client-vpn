@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Genera un icono de 256x256 para PreyVPN
+Genera un icono de 256x256 para NavTunnel
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -56,5 +56,5 @@ def create_app_icon(filename, size=256):
     print(f"✓ Created {filename} ({size}x{size})")
 
 if __name__ == '__main__':
-    create_app_icon('debian/usr/share/icons/hicolor/256x256/apps/preyvpn.png', 256)
+    create_app_icon('debian/usr/share/icons/hicolor/256x256/apps/navtunnel.png', 256)
     print("\n✅ Icon generated successfully!")

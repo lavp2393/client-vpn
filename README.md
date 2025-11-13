@@ -1,4 +1,4 @@
-# PreyVPN - Cliente OpenVPN con GUI Multi-Plataforma
+# NavTunnel - Cliente OpenVPN con GUI Multi-Plataforma
 
 **Version 1.0.0 - Stable Release (Linux/Ubuntu - 2025-11-11)**
 
@@ -51,7 +51,7 @@ Si instalas desde el paquete .deb, **todas las dependencias se instalan automát
 **La forma más fácil** - un solo comando que instala todo:
 
 ```bash
-sudo dpkg -i dist/preyvpn_1.0.0_amd64.deb
+sudo dpkg -i dist/navtunnel_1.0.0_amd64.deb
 ```
 
 Si aparecen errores de dependencias:
@@ -64,9 +64,9 @@ sudo apt-get install -f
 - ✅ Configura permisos sudo automáticamente (no necesitarás usar sudo para ejecutar la app)
 - ✅ Crea entrada en el menú de aplicaciones
 - ✅ Instala icono del sistema
-- ✅ Desinstalación limpia con `sudo apt remove preyvpn`
+- ✅ Desinstalación limpia con `sudo apt remove navtunnel`
 
-Después de instalar, busca "PreyVPN" en tu menú de aplicaciones.
+Después de instalar, busca "NavTunnel" en tu menú de aplicaciones.
 
 ### Opción 2: Compilar con Docker (Para desarrolladores - NO requiere Go instalado)
 
@@ -79,8 +79,8 @@ task build-docker
 # O con script dev.sh
 ./dev.sh build-binary
 
-# El binario estará en dist/preyvpn
-./dist/preyvpn
+# El binario estará en dist/navtunnel
+./dist/navtunnel
 ```
 
 Ver [BUILD.md](BUILD.md) para documentación completa de compilación.
@@ -103,28 +103,28 @@ Ver [BUILD.md](BUILD.md) para documentación completa de compilación.
    make build
    ```
 
-   El binario se generará en `bin/preyvpn`
+   El binario se generará en `bin/navtunnel`
 
 4. **Instalar en el sistema** (opcional)
    ```bash
    make install
    ```
 
-   Esto copiará el binario a `/usr/local/bin/preyvpn`
+   Esto copiará el binario a `/usr/local/bin/navtunnel`
 
 ## Primer Uso
 
 ### Configuración Inicial (muy simple)
 
 1. **Lanzar la aplicación**
-   - Si instalaste con .deb: busca "PreyVPN" en el menú de aplicaciones
-   - Si compilaste: ejecuta `./dist/preyvpn` o `preyvpn` si está en PATH
+   - Si instalaste con .deb: busca "NavTunnel" en el menú de aplicaciones
+   - Si compilaste: ejecuta `./dist/navtunnel` o `navtunnel` si está en PATH
 
 2. **Seleccionar archivo .ovpn**
    - En el primer inicio, aparecerá un diálogo de bienvenida
    - Haz clic en "Seleccionar Archivo VPN"
    - Navega hasta tu archivo `.ovpn` y selecciónalo
-   - La aplicación guardará esta configuración automáticamente en `~/.config/PreyVPN/config.json`
+   - La aplicación guardará esta configuración automáticamente en `~/.config/NavTunnel/config.json`
 
 3. **Cambiar archivo VPN** (opcional)
    - Si necesitas cambiar el archivo .ovpn más tarde, usa el botón "Cambiar archivo VPN" en la ventana principal
@@ -135,9 +135,9 @@ Ver [BUILD.md](BUILD.md) para documentación completa de compilación.
 
 ### Conectar a la VPN
 
-1. **Ejecutar PreyVPN**
+1. **Ejecutar NavTunnel**
    - Desde el menú de aplicaciones (si usaste .deb)
-   - O ejecuta `preyvpn` desde terminal
+   - O ejecuta `navtunnel` desde terminal
 
 2. **Presionar Conectar**
    - La aplicación se minimizará al system tray (icono en la barra del sistema)
@@ -189,7 +189,7 @@ Ver [BUILD.md](BUILD.md) para documentación completa de compilación.
 ```
 .
 ├── cmd/
-│   └── preyvpn/
+│   └── navtunnel/
 │       └── main.go                    # Punto de entrada
 ├── internal/
 │   ├── core/
@@ -293,7 +293,7 @@ make build-darwin   # macOS amd64 + arm64 (Apple Silicon)
 make install        # Instalar en /usr/local/bin (Linux/macOS)
 make uninstall      # Desinstalar del sistema
 make check-deps     # Verificar dependencias del sistema
-make setup-config   # Crear directorio ~/PreyVPN
+make setup-config   # Crear directorio ~/NavTunnel
 make info           # Mostrar información del sistema
 make help           # Mostrar ayuda completa
 ```
@@ -308,7 +308,7 @@ Para generar un binario optimizado sin símbolos de debug:
 make build-release
 ```
 
-El binario resultante en `bin/preyvpn` será más pequeño y estará listo para distribuir.
+El binario resultante en `bin/navtunnel` será más pequeño y estará listo para distribuir.
 
 ## Seguridad
 
@@ -330,8 +330,8 @@ sudo apt install policykit-1
 ```
 
 ### Error: "No se encontró el archivo de configuración"
-- Verifica que el archivo existe: `ls -la ~/PreyVPN/prey-prod.ovpn`
-- Verifica los permisos: `chmod 644 ~/PreyVPN/prey-prod.ovpn`
+- Verifica que el archivo existe: `ls -la ~/NavTunnel/tu-archivo.ovpn`
+- Verifica los permisos: `chmod 644 ~/NavTunnel/tu-archivo.ovpn`
 
 ### OTP siempre falla
 - Verifica que la hora de tu sistema esté sincronizada:
@@ -364,7 +364,7 @@ cd ..
 cd packaging
 ./build-deb.sh
 
-# El paquete estará en dist/preyvpn_1.0.0_amd64.deb
+# El paquete estará en dist/navtunnel_1.0.0_amd64.deb
 ```
 
 Ver [packaging/debian/DEBIAN/control](packaging/debian/DEBIAN/control) para la lista completa de dependencias.
@@ -378,7 +378,7 @@ Características implementadas:
 - ✅ Soporta Linux/Ubuntu completo con GUI
 - ✅ System tray con iconos de estado
 - ✅ File picker visual (selección gráfica de .ovpn)
-- ✅ Configuración persistente (~/.config/PreyVPN/)
+- ✅ Configuración persistente (~/.config/NavTunnel/)
 - ✅ Packaging .deb con configuración automática de permisos
 - ✅ Instalación desde menú de aplicaciones
 - ✅ Minimizar a tray en lugar de cerrar

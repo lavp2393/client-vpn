@@ -1,4 +1,4 @@
-module github.com/prey/preyvpn
+module github.com/lavp2393/navtunnel
 
 go 1.21
 

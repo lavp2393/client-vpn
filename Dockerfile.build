@@ -1,6 +1,6 @@
 # Dockerfile multi-stage para compilación limpia
-# Uso: docker build -f Dockerfile.build -t preyvpn-builder .
-#      docker run --rm -v $(pwd)/dist:/dist preyvpn-builder
+# Uso: docker build -f Dockerfile.build -t navtunnel-builder .
+#      docker run --rm -v $(pwd)/dist:/dist navtunnel-builder
 
 # Stage 1: Builder
 FROM golang:1.22-bookworm AS builder
@@ -31,15 +31,15 @@ COPY . .
 # Compilar el binario
 # -ldflags="-s -w" reduce el tamaño eliminando símbolos de debug
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o preyvpn ./cmd/preyvpn
+    go build -ldflags="-s -w" -o navtunnel ./cmd/navtunnel
 
 # Verificar que el binario se creó correctamente
-RUN ls -lh preyvpn
+RUN ls -lh navtunnel
 
 # Stage 2: Output (opcional - para runtime minimal)
 FROM scratch AS export
-COPY --from=builder /build/preyvpn /preyvpn
+COPY --from=builder /build/navtunnel /navtunnel
 
 # Por defecto, copiar el binario al volumen /output
 FROM builder AS output
-CMD ["sh", "-c", "cp /build/preyvpn /output/ && echo 'Binario compilado en /output/preyvpn' && ls -lh /output/preyvpn"]
+CMD ["sh", "-c", "cp /build/navtunnel /output/ && echo 'Binario compilado en /output/navtunnel' && ls -lh /output/navtunnel"]

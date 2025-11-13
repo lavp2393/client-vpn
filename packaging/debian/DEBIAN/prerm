@@ -1,5 +1,5 @@
 #!/bin/bash
-# prerm script para preyvpn
+# prerm script para navtunnel
 # Limpia la configuración de sudo al desinstalar
 
 set -e
@@ -7,7 +7,7 @@ set -e
 case "$1" in
     remove|purge)
         # Eliminar configuración de sudo
-        SUDOERS_FILE="/etc/sudoers.d/preyvpn"
+        SUDOERS_FILE="/etc/sudoers.d/navtunnel"
         if [ -f "$SUDOERS_FILE" ]; then
             rm -f "$SUDOERS_FILE"
             echo "✅ Configuración de sudo eliminada"

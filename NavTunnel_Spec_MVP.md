@@ -1,4 +1,4 @@
-# PreyVPN — Especificación MVP v1.0 (Ubuntu, con .deb) ✅ COMPLETO
+# NavTunnel — Especificación MVP v1.0 (Ubuntu, con .deb) ✅ COMPLETO
 
 ## 1) Objetivo
 Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
@@ -24,7 +24,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
 - Al primer inicio: aparece **diálogo de bienvenida** con botón "Seleccionar Archivo VPN"
 - Se abre un **file picker visual** que filtra archivos `.ovpn`
 - El usuario navega y selecciona cualquier archivo `.ovpn` (sin importar el nombre o ubicación)
-- La ruta seleccionada se guarda en: `~/.config/PreyVPN/config.json`
+- La ruta seleccionada se guarda en: `~/.config/NavTunnel/config.json`
 
 **Beneficios:**
 - ✅ 100% visual, no requiere terminal
@@ -39,7 +39,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
 
 ### 4.1 Ciclo básico
 1. **Inicio**
-   - Verifica existencia de `~/PreyVPN/prey-prod.ovpn`.
+   - Verifica existencia de `~/NavTunnel/tu-archivo.ovpn`.
    - Si no está: pantalla "perfil no encontrado" + **Reintentar**.
    - Si está: habilita **Conectar**.
 
@@ -47,7 +47,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
    - Selecciona **puerto de management** libre (ej. 49152–65535).
    - Lanza `openvpn` con **elevación** usando `pkexec`:
      ```bash
-     openvpn --config ~/PreyVPN/prey-prod.ovpn        --management 127.0.0.1:<PORT> stdin        --auth-retry interact        --auth-nocache
+     openvpn --config ~/NavTunnel/tu-archivo.ovpn        --management 127.0.0.1:<PORT> stdin        --auth-retry interact        --auth-nocache
      ```
    - Abre socket TCP a `127.0.0.1:<PORT>` y comienza a **parsear eventos**.
 
@@ -101,7 +101,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
   - Diálogo nativo de Fyne
   - Filtro automático para archivos `.ovpn`
   - Navegar por todo el sistema de archivos
-  - Guarda la selección en `~/.config/PreyVPN/config.json`
+  - Guarda la selección en `~/.config/NavTunnel/config.json`
 
 ### **Modales de Autenticación**
   - Usuario (placeholder: "usuario corporativo")
@@ -128,7 +128,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
 ## 7) Estructura de proyecto (✅ IMPLEMENTADA)
 
 ```
-/cmd/preyvpn/main.go                    # Punto de entrada
+/cmd/navtunnel/main.go                    # Punto de entrada
 /internal/
   /core/
     openvpn.go                          # spawn/kill de proceso con pkexec; usa platform abstraction
@@ -145,7 +145,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
       generate_icons.py
       disconnected.png, connecting.png, connected.png, error.png
   /config/                              # ⭐ Configuración persistente (NUEVO)
-    config.go                           # Gestión de config.json en ~/.config/PreyVPN/
+    config.go                           # Gestión de config.json en ~/.config/NavTunnel/
   /ui/
     app.go                              # ventana principal, file picker, system tray integration
     prompts.go                          # modales user/pass/otp
@@ -157,7 +157,7 @@ Binario **Go** con GUI completa diseñada para usuarios no técnicos que:
   /debian/
     /DEBIAN/
       control                           # Metadata y dependencias
-      postinst                          # Configura /etc/sudoers.d/preyvpn
+      postinst                          # Configura /etc/sudoers.d/navtunnel
       prerm                             # Limpieza
     /usr/...                            # Estructura del paquete
 ```
@@ -228,12 +228,12 @@ password "Auth" 123456        // o como 'password' adicional, según prompt
    - Instala todas las dependencias automáticamente
    - Configura permisos sudo sin intervención del usuario
    - Crea entrada en menú de aplicaciones
-   - Instalable con un solo comando: `sudo dpkg -i preyvpn_1.0.0_amd64.deb`
+   - Instalable con un solo comando: `sudo dpkg -i navtunnel_1.0.0_amd64.deb`
 
 2. ✅ **File Picker Visual:**
    - Al primer inicio, aparece diálogo de bienvenida
    - File picker filtra archivos `.ovpn` automáticamente
-   - Guarda la selección en `~/.config/PreyVPN/config.json`
+   - Guarda la selección en `~/.config/NavTunnel/config.json`
    - Botón "Cambiar archivo VPN" funciona correctamente
 
 3. ✅ **Autenticación multi-factor:**
@@ -268,7 +268,7 @@ password "Auth" 123456        // o como 'password' adicional, según prompt
 - ✅ Implementación completa para Linux/Ubuntu
 - ✅ System tray con iconos de estado y menú contextual
 - ✅ File picker visual (Fyne)
-- ✅ Configuración persistente en `~/.config/PreyVPN/config.json`
+- ✅ Configuración persistente en `~/.config/NavTunnel/config.json`
 - ✅ Packaging .deb con postinst/prerm scripts
 - ✅ Desktop entry y menú de aplicaciones
 - ✅ Multi-factor authentication (usuario + password + OTP)

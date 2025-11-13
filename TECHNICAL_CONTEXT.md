@@ -1,4 +1,4 @@
-# PreyVPN - Contexto Técnico del Problema de Autenticación OTP
+# NavTunnel - Contexto Técnico del Problema de Autenticación OTP
 
 ## Última actualización: 2025-10-29
 
@@ -6,7 +6,7 @@
 
 ## 1. Descripción del Problema
 
-**Síntoma:** El cliente PreyVPN no está solicitando el código OTP durante el proceso de autenticación, lo que resulta en fallos de conexión con `AUTH_FAILED`.
+**Síntoma:** El cliente NavTunnel no está solicitando el código OTP durante el proceso de autenticación, lo que resulta en fallos de conexión con `AUTH_FAILED`.
 
 **Comportamiento esperado:**
 1. Usuario ingresa username (email corporativo)
@@ -56,7 +56,7 @@ pam_sss(openvpn:auth): authentication success; user=user@example.com
 
 ## 3. Configuración OpenVPN
 
-### Archivo: `~/PreyVPN/prey-prod.ovpn`
+### Archivo: `~/NavTunnel/tu-archivo.ovpn`
 
 ```
 client
@@ -80,12 +80,12 @@ verb 4
 
 ## 4. OpenVPN Management Interface Protocol
 
-### Comandos del Cliente PreyVPN
+### Comandos del Cliente NavTunnel
 
 ```bash
 # Al iniciar OpenVPN
 pkexec openvpn \
-  --config ~/PreyVPN/prey-prod.ovpn \
+  --config ~/NavTunnel/tu-archivo.ovpn \
   --management 127.0.0.1 <PORT> \
   --management-query-passwords \
   --management-hold \
@@ -238,7 +238,7 @@ sudo tail -f /var/log/auth.log
 
 ### Probar conexión manual con OpenVPN CLI
 ```bash
-sudo openvpn --config ~/PreyVPN/prey-prod.ovpn --verb 4
+sudo openvpn --config ~/NavTunnel/tu-archivo.ovpn --verb 4
 ```
 
 **Flujo esperado:**
@@ -252,7 +252,7 @@ Response: 345678
 ### Probar con Management Interface manual
 ```bash
 # Terminal 1: Iniciar OpenVPN con management
-sudo openvpn --config prey-prod.ovpn \
+sudo openvpn --config tu-archivo.ovpn \
   --management 127.0.0.1 7505 \
   --management-query-passwords \
   --management-hold
@@ -298,7 +298,7 @@ Y dejar que OpenVPN maneje el OTP interactivamente.
 ### Opción 4: Script wrapper con expect
 Usar `expect` para automatizar la interacción con OpenVPN CLI:
 ```tcl
-spawn openvpn --config prey-prod.ovpn
+spawn openvpn --config tu-archivo.ovpn
 expect "Enter Auth Username:"
 send "user@example.com\r"
 expect "Enter Auth Password:"
@@ -319,7 +319,7 @@ send "$otp\r"
 - Documentación: https://www.linotp.org/doc/latest/
 - PAM plugin: https://github.com/LinOTP/linotp-auth-pam
 
-### Logs del Cliente (PreyVPN)
+### Logs del Cliente (NavTunnel)
 Los logs se muestran en la ventana de la aplicación y contienen:
 - `[MGMT]` - Mensajes del management interface
 - `[DEBUG]` - Logs de debugging internos

@@ -2,7 +2,7 @@
 
 package platform
 
-import "github.com/prey/preyvpn/internal/platform/darwin"
+import "github.com/lavp2393/navtunnel/internal/platform/darwin"
 
 // darwinAdapter adapta darwin.DarwinPlatform a la interfaz Platform
 type darwinAdapter struct {

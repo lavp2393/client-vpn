@@ -70,7 +70,7 @@ build_image() {
 
 # Mostrar ayuda
 show_help() {
-    echo "PreyVPN - Script de Desarrollo Docker"
+    echo "NavTunnel - Script de Desarrollo Docker"
     echo ""
     echo "Uso: ./dev.sh [comando]"
     echo ""
@@ -132,7 +132,7 @@ cmd_logs() {
 # Comando: shell
 cmd_shell() {
     info "Abriendo shell en el container..."
-    docker-compose exec preyvpn /bin/bash
+    docker-compose exec navtunnel /bin/bash
 }
 
 # Comando: build (imagen Docker)
@@ -146,14 +146,14 @@ cmd_build_binary() {
     mkdir -p dist
 
     info "Construyendo imagen de compilación..."
-    docker build -f Dockerfile.build -t preyvpn-builder --target builder . || error "Falló la construcción de la imagen"
+    docker build -f Dockerfile.build -t navtunnel-builder --target builder . || error "Falló la construcción de la imagen"
 
     info "Compilando binario..."
-    docker run --rm -v "$(pwd)/dist:/output" preyvpn-builder sh -c "cp /build/preyvpn /output/ && chmod +x /output/preyvpn" || error "Falló la compilación"
+    docker run --rm -v "$(pwd)/dist:/output" navtunnel-builder sh -c "cp /build/navtunnel /output/ && chmod +x /output/navtunnel" || error "Falló la compilación"
 
-    success "Binario compilado exitosamente en ./dist/preyvpn"
-    ls -lh dist/preyvpn
-    file dist/preyvpn
+    success "Binario compilado exitosamente en ./dist/navtunnel"
+    ls -lh dist/navtunnel
+    file dist/navtunnel
 }
 
 # Comando: clean

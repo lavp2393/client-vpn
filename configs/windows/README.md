@@ -2,16 +2,16 @@
 
 ## Archivos necesarios
 
-### preyvpn.ico
+### navtunnel.ico
 Icono de la aplicación (formato .ico)
 
 - Resoluciones recomendadas: 16x16, 32x32, 48x48, 256x256
 - Usar herramientas como ImageMagick para convertir desde PNG:
   ```bash
-  magick convert icon.png -define icon:auto-resize=256,128,64,48,32,16 preyvpn.ico
+  magick convert icon.png -define icon:auto-resize=256,128,64,48,32,16 navtunnel.ico
   ```
 
-### preyvpn.manifest
+### navtunnel.manifest
 Manifest para configurar UAC (User Account Control)
 
 Ejemplo básico:
@@ -21,10 +21,10 @@ Ejemplo básico:
   <assemblyIdentity
     version="1.0.0.0"
     processorArchitecture="*"
-    name="PreyVPN"
+    name="NavTunnel"
     type="win32"
   />
-  <description>PreyVPN Client</description>
+  <description>NavTunnel Client</description>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
@@ -53,5 +53,5 @@ Ejemplo básico:
 Configuración en el registro de Windows para auto-start (opcional):
 ```
 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
-  PreyVPN = "C:\Program Files\PreyVPN\preyvpn.exe"
+  NavTunnel = "C:\Program Files\NavTunnel\navtunnel.exe"
 ```
